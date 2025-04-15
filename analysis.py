@@ -1,7 +1,9 @@
-import openai
-import os
+# analysis.py (aktualisiert für OpenAI v1)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+import os
+import openai
+
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_analysis(financials, mode="value"):
     prompt = f"""
@@ -22,13 +24,10 @@ Business summary:
 
 Give a {mode}-investing style assessment. Is the stock attractively valued? Should one buy now or wait? Suggest a fair value range.
 """
-    
-client = openai.OpenAI()
 
-response = client.chat.completions.create(
-    model="gpt-4",
-    messages=[{"role": "user", "content": prompt}]
-)
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}]
+    )
 
-return response.choices[0].message.content
-
+    return response.choices[0].message.content
