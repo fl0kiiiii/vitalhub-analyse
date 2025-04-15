@@ -22,10 +22,13 @@ Business summary:
 
 Give a {mode}-investing style assessment. Is the stock attractively valued? Should one buy now or wait? Suggest a fair value range.
 """
+    
+client = openai.OpenAI()
 
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
-    )
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": prompt}]
+)
 
-    return response.choices[0].message["content"]
+return response.choices[0].message.content
+
