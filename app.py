@@ -1,19 +1,46 @@
 import streamlit as st
 from finance_data import get_financial_data
 from analysis import generate_analysis
+import pandas as pd
 
-st.set_page_config(page_title="Stock Analyzer", layout="centered")
+st.set_page_config(page_title="GPT-Aktien-Watchlist", layout="centered")
+st.title("📊 GPT-basierte Aktienanalyse (Watchlist)")
+st.write("Analysiere mehrere Aktien automatisiert mit GPT für Value- oder Growth-Investing")
 
-st.title("📊 GPT-basierte Aktienanalyse")
-st.write("Automatisierte Fundamentalanalyse für Value- und Growth-Investing")
-
-ticker = st.text_input("Unternehmens-Ticker eingeben (z. B. VHI.TO)", "VHI.TO")
+tickers_input = st.text_input("Unternehmens-Ticker (kommagetrennt, z. B. VHI.TO, AAPL, MSFT)", "VHI.TO, AAPL")
 mode = st.selectbox("Analysemodus", ["value", "growth"])
 
-if st.button("📈 Analyse starten"):
-    with st.spinner("Hole Finanzdaten und analysiere..."):
-        financials = get_financial_data(ticker)
-        gpt_analysis = generate_analysis(financials, mode)
+if st.button("📈 Watchlist analysieren"):
+    tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
+    results = []
+    
+    for ticker in tickers:
+        with st.spinner(f"Hole Daten & analysiere {ticker} ..."):
+            try:
+                data = get_financial_data(ticker)
+                gpt_summary = generate_analysis(data, mode)
+                
+                # GPT-Blöcke anzeigen
+                st.subheader(f"📘 Analyse für {data['name']} ({ticker})")
+                st.markdown(gpt_summary)
 
-    st.subheader(f"Analyse für {financials['name']}")
-    st.markdown(gpt_analysis)
+                # Tabellen-Vorschau vorbereiten
+                results.append({
+                    "Name": data["name"],
+                    "Symbol": ticker,
+                    "Kurs": data["price"],
+                    "KGV": data["peRatio"],
+                    "KUV": data["psRatio"],
+                    "Cashflow": data["freeCashflow"],
+                    "Debt/Equity": data["debtToEquity"],
+                    "Margin": data["ebitdaMargins"],
+                    "GPT-Fazit": gpt_summary.split("\n")[0][:80] + "..."  # Erste Zeile GPT
+                })
+
+            except Exception as e:
+                st.error(f"⚠️ Fehler bei {ticker}: {e}")
+    
+    if results:
+        st.subheader("📊 Übersicht aller Aktien in der Watchlist")
+        df = pd.DataFrame(results)
+        st.dataframe(df)
