@@ -1,3 +1,5 @@
+import yfinance as yf
+
 def get_financial_data(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
