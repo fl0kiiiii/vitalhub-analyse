@@ -29,13 +29,16 @@ if st.button("📈 Watchlist analysieren"):
                     "Name": data["name"],
                     "Symbol": ticker,
                     "Kurs": data["price"],
+                    "Bruttomarge (%)": round(data["grossMargins"] * 100, 2) if data["grossMargins"] else "–",
+                    "EBITDA-Marge (%)": round(data["ebitdaMargins"] * 100, 2) if data["ebitdaMargins"] else "–",
+                    "Nettomarge (%)": round(data["netMargin"] * 100, 2) if data["netMargin"] else "–",
                     "KGV": data["peRatio"],
                     "KUV": data["psRatio"],
                     "Cashflow": data["freeCashflow"],
                     "Debt/Equity": data["debtToEquity"],
-                    "Margin": data["ebitdaMargins"],
-                    "GPT-Fazit": gpt_summary.split("\n")[0][:80] + "..."  # Erste Zeile GPT
-                })
+                    "GPT-Fazit": gpt_summary.split("\n")[0][:80] + "..."
+})
+
 
             except Exception as e:
                 st.error(f"⚠️ Fehler bei {ticker}: {e}")
