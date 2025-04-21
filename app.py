@@ -18,13 +18,18 @@ if st.button("📈 Watchlist analysieren"):
         with st.spinner(f"Hole Daten & analysiere {ticker} ..."):
             try:
                 data = get_financial_data(ticker)
+
+                # ✅ FIX: falls debtToEquity zu groß ist (Faktor statt Verhältnis)
+                if data["debtToEquity"] and data["debtToEquity"] > 10:
+                    data["debtToEquity"] = data["debtToEquity"] / 100
+
                 gpt_summary = generate_analysis(data, mode)
 
-                # GPT-Analyseblock anzeigen
+                # Einzelanalyse anzeigen
                 st.subheader(f"📘 Analyse für {data['name']} ({ticker})")
                 st.markdown(gpt_summary)
 
-                # Ergebnisse sammeln für Tabelle
+                # Tabelle befüllen
                 results.append({
                     "Name": data["name"],
                     "Symbol": ticker,
@@ -39,11 +44,7 @@ if st.button("📈 Watchlist analysieren"):
                     "GPT-Fazit": gpt_summary.split("\n")[0][:100] + "..."
                 })
 
-
             except Exception as e:
                 st.error(f"⚠️ Fehler bei {ticker}: {e}")
     
-    if results:
-        st.subheader("📊 Übersicht aller Aktien in der Watchlist")
-        df = pd.DataFrame(results)
-        st.dataframe(df)
+    if results
