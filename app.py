@@ -47,4 +47,7 @@ if st.button("📈 Watchlist analysieren"):
             except Exception as e:
                 st.error(f"⚠️ Fehler bei {ticker}: {e}")
     
-    if results
+    if results:
+        st.subheader("📊 Übersicht aller Aktien in der Watchlist")
+        df = pd.DataFrame(results)
+        st.dataframe(df)
