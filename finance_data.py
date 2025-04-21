@@ -15,6 +15,7 @@ def get_financial_data(ticker):
         "price": info.get("currentPrice"),
         "marketCap": info.get("marketCap"),
         "revenue": revenue,
+        "ebitda": info.get("ebitda"),
         "netIncome": net_income,
         "peRatio": info.get("trailingPE"),
         "psRatio": info.get("priceToSalesTrailing12Months"),
